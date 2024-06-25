@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Structure Prediction</title>
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-base.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* background-color: #f0f0f0; */
+            color: #333;
+            line-height: 1.6;
+            background-image: url('rna.jpg');
+            background-size: cover; /* or 'contain' depending on your preference */
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        /* header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        } */
+        header {
+    background-color: #007bff; /* Fallback color */
+    background-image: url('rna3.jpg'); /* Background image */
+    background-size: cover; /* or 'contain' depending on your preference */
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    height: 100px;
+}
+
+        section {
+            padding: 20px;
+            margin: 20px;
+            /* background-color: #fff; */
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: auto;    
+        }
+        footer {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+#container { 
+        width: 50%; height: 100%; margin: 0; padding: 0;
+        }
+        h2, h3 {
+    font-weight: bold;
+    color: #333333;
+}
+    /* h1{
+    font-weight: bold;
+    color: #0032fa;
+    
+} */
+    header h1 {
+    font-weight: bold;
+    color: #2b00c8;
+    font-family: 'Times New Roman', Times, serif;
+    
+}
+    .header-text-background {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 5px; /* Add rounded corners for better appearance */
+}
+        header, footer {
+    background-color: #007bff;
+    color: #fff;
+}
+
+    /* Responsive design */
+@media only screen and (max-width: 600px) {
+    section {
+        margin: 10px;
+        padding: 10px;
+    }
+}
+
+/* Accessibility */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Additional styling for lists */
+ol, ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+    /* .testcase {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        } */
+        .testcase h4 {
+            cursor: pointer;
+        }
+        .testcase-content {
+            display: none;
+        }
+        .testcase-content.active {
+            display: block;
+        }
+        .section-with-image {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><span class="header-text-background">RNA STRUCTURE PREDICTION</span></h1>
+    </header>
+
+
+    <section>
+        <h2>Introduction</h2>
+        <p>The secondary structure of an RNA molecule refers to the base pairs formed between complementary nucleotides within the RNA sequence. The algorithm predicts the		structure by finding the maximum number of base pairs that can form without creating pseudoknots.</p>
+	<p>An RNA molecule is a string B = b1b2 … bn;</p>
+	<p>for each bi {A,G,U,C}</p>
+	<p>An secondary structure on B is a set of pairs S =  {(i , j)}, where 1 ≤ i , j ≤  n and satisfies the following rules.</p>
+
+    </section>
+
+    <section>
+        <h2>Algorithm </h2>
+        <p>This dynamic programming algorithm will efficiently compute the optimal secondary structure of an RNA sequence. It involves the following steps:</p>
+        <ol>
+	    <li>OPT(i,j) is the maximum number of base pairs in a secondary structure for bibi+1 … bj, OPT(i,j) = 0, if i≥j-4.</li>
+		<li>In the optimal secondary structure on bibi+1 … bj 
+            
+			<ol>- if j is not a member of any pair, use OPT(i,j-1)</ol>
+            
+
+			<ol>- if j pairs with some t < j - 4, knot condition yields two independent sub-problems! OPT(i,t -1) and OPT(t+1,j-1)</ol>
+            
+			<ol>- OPT(i,j) =max{ OPT(i,j-1) , max{1+OPT(i,t-1)+OPT(t+1,j-1)}}</ol>
+	    </li>
+            <li>Initialize a square matrix with dimensions equal to the length of the RNA sequence.</li>
+            <li>Iterate over the matrix diagonally, filling in values based on the maximum number of base pairs that can form between nucleotides at each position.</li>
+            <li>Use backtracking to determine the optimal secondary structure based on the filled matrix.</li>
+        </ol>
+    </section>
+    
+    <section>
+        <h2>Algorithm Steps</h2>
+        <ul>
+            <li>Initialization: Initialize a matrix OPT of size (n x n), where n is the length of the RNA sequence. Each
+                cell OPT[i][j] will store the maximum number of base pairs in the subsequence from index i to index j.</li>
+            <li>Dynamic Programming (DP) Approach:
+                <ol>
+                    <li>Iterate over the RNA sequence using nested loops (j and i).</li>
+                    <li>Within the nested loops, iterate over a third variable t within a specific range, representing
+                        possible pairings.</li>
+                    <li>Calculate the maximum number of base pairs that can be formed between the nucleotides at indices i
+                        and j, considering different pairing possibilities.</li>
+                    <li>Update the OPT matrix with the maximum number of base pairs for the subsequence from i to j.</li>
+                </ol>
+            </li>
+            <li>Traceback:
+                <ol>
+                    <li>Reconstruct the secondary structure by tracing back through the OPT matrix.</li>
+                    <li>Start from the top-left cell of the OPT matrix and move diagonally, finding the positions of base
+                        pairs.</li>
+                    <li>Recursively call the Traceback function to identify base pairs and update the secondary structure
+                        string.</li>
+                </ol>
+            </li>
+            <li>Output:
+                <ol>
+                    <li>Print the input RNA sequence.</li>
+                    <li>Print the reconstructed secondary structure.</li>
+                    <li>Print the length of the sequence, the number of predicted pairs, and the execution time.</li>
+                </ol>
+            </li>
+            <li>Functions:
+                <ol>
+                    <li>Main Method (public static void main(String[] args)):
+                        <ul>
+                            <li>Reads RNA sequences from a file ("testcases.txt").</li>
+                            <li>Calls the Nussinov algorithm for each sequence.</li>
+                        </ul>
+                    </li>
+                    <li>Nussinov Method (private static void Nussinov(String S)):
+                        <ul>
+                            <li>Implements the Nussinov algorithm.</li>
+                            <li>Computes the OPT matrix to find the maximum number of base pairs.</li>
+                            <li>Calls the Traceback method to reconstruct the secondary structure.</li>
+                        </ul>
+                    </li>
+                    <li>Traceback Method (private static char[] Traceback(int[][] OPT, int left, int right, char[] se)):
+                        <ul>
+                            <li>Recursively reconstructs the secondary structure based on the OPT matrix.</li>
+                            <li>Updates a character array to represent the secondary structure.</li>
+                        </ul>
+                    </li>
+                    <li>randomS Method (private static String randomS(int size)):
+                        <ul>
+                            <li>Generates a random RNA sequence of a given size.</li>
+                            <li>Not used in the main functionality but provided as an additional utility.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </li>
+            
+        </ul>
+    </section>
+
+    <section>
+        <h2>Analysis</h2>
+        <p>Time Complexity: The time complexity of the algorithm is O(n^3), where n is the length of the RNA sequence. This
+            is due to the nested loops used to compute the OPT matrix.</p>
+        <p>Space Complexity: The space complexity is O(n^2) due to the OPT matrix.</p>
+        <p>Performance: The algorithm performs well for small to moderate-sized RNA sequences. However, it may become
+            inefficient for very large sequences due to its cubic time complexity.</p>
+    </section>
+
+    <section>
+        <h2>Example Calculation</h2>
+        <p>Let's consider a simple RNA sequence: AUUGC. We'll go through the steps of the Nussinov algorithm to predict its secondary structure.</p>
+        <ol>
+            <li>Initialize the matrix:
+                <pre>
+                A U U G C
+              A 0 0 0 0 0
+              U   0 0 0 0
+              U     0 0 0
+              G       0 0
+              C         0
+                </pre>
+            </li>
+            <li>Fill in the matrix:
+                <pre>
+                A U U G C
+              A 0 0 0 1 1
+              U   0 0 0 0 1
+              U     0 0 0 0
+              G       0 0 0
+              C         0 0
+                </pre>
+            </li>
+            <li>Backtrack to find the optimal secondary structure.</li>
+        </ol>
+        <p>The optimal secondary structure for the sequence AUUGC is (AU)(UG)(C).</p>
+    </section>
+
+    <section>
+        <script>
+            function toggleContent(element) {
+                var content = element.nextElementSibling;
+                content.classList.toggle('active');
+            }
+        </script>
+        <h2>Testing :</h2>
+        <div class="testcase">
+        <h4 onclick="toggleContent(this)">1.Homo sapiens (human) small Cajal body-specific RNA 7 (SCARNA7)</h4>
+        <div class="testcase-content">
+        <p>UGGAAAUGAUGAAAUAGAGAUAAUUGGGUGUUGAAUGUUGUAUGACUGGAAAUUUUUAAUAUGUAUAUUAUGUAAUUCUUAUAAGUUUAGUGUUUUAUAGGUACUUAAUAGAGAGUGUGUAUGCAUG<p>
+        <p>UGUGUGUGCUUGUGGUGGCUAUGGAAAGGGGGCACUGACUGGUGAUGCUGAUAUUGGAGUGCAUCUGAGGCUGUUGUAGAAAUAACAUGGGUUGUUGAUUACAACAUUGCCAAUGAUUAUAACCCA</p>
+        <p>AGAACAGCUCACCUAACUAGCCUGGCACCCUAAAAUCUCUAACAGGUUCAUUAAAAUGGUCCUGUGAUCUGAUCCAA</p>
+	<p>((....(...(.(((((((.((.(....).)).((.(....)).((..(((....)((((((....)).)).)(((....))...)))))).(.(.(((((((..((.(......).))))(((.(.(.(.(.(.(....)(...(.....))(.....).)...)(((((.((((.(.((((.(.(.((.(..(((((((.(...((((((((....).))).)))).))))..))))))).(....)))))).).))))))))).).)...).)).)))).))))))))))(.(((..((((....)))..))))).)).)..)))).</p>
+        <p>Length = 330, Pairs = 115, Time = 0.2401856 sec</p>
+    </div>
+    </div>
+
+    <div class="testcase">
+        <h4 onclick="toggleContent(this)">2. Homo sapiens (human) long intergenic non-protein coding RNA 3126 (LINC03126)
+            URS0000E60AA8_9606</h4>
+        <div class="testcase-content">
+   
+	<p>GGGCGCCUCCGCGCUCCCGCCUCCUCCUGGCAACCUGGUGCGCGGCUCCGGACCUGGCGACCCACGACCGGCUGGUCACUUGCUGCCACCUCGCAAAGGCGCAU</p>
+	<p>CUCUAGUUCAGUGGUGAGCUGCGGCCGGGUCGCUGCAACUCGCUCCAGGCCUCCGGACUCGUGGCCUCGGUGUCCCUCGCGGAGCCCUCGGUGU</p>
+	<p>GUCGCUUGCAGGCUCUUUUUUUGAAGAAAGCAGGGAGGGAAUGGCCUUGUGAGAGACUCCAGGAGCAAAGAGCGACCCUCACAAGGCCCAAGUCCUCCCAGAGCUCAGGGAAGCUGU</p>
+    <p>CGCUUCUGACAGAAGAAGGGAGACAAAGCUCCCUCCUGUGUGUCCCUGGUGGUCUAGUGGCUAGGAUUCGGCGCUUUCACCGCCGCGGCCCGGGUUCGAUUCCCGGCCAGGGAAUUGU</p>
+       <p>UUUACACUGGCCGCCCUCCCGCAGGAAUCUUCCUUCACUACGCUGUCAGCCGGCCUGCUCCAAGGGCCAGAAGCAGAACAGUCUCCGCAGCGGGGUUAAAGCCGGGCGAAGGAGGGC</p>
+        <p>AAGUGCUGGUGGACCACCUCUCACGACACACCGUUCCUGUUUAUCUCAGUGUCCGUCAUCCGCGGGAGCAGCUUUAGAGAGCGACUGAGCGUCUCGCUCCGGUGUACACAGCCCGGCA</p>
+        <p>AAGAUGCCAGCCCCCGUGGAGCUGCACCCAAUAAGCCCACCUUCUUUCCCGUCGCCACCCCGGAGACGCCCAUCGGGCUGAGCUGCGAAUAACUAAGAGAGAGGCCAAGCCAAGUCGU</p>
+        <p>GGCGUUUGUGGCAGCCCCGGACACGGGCACCAGCCAGUCAGCGGAGCCUCCUCACCUCCGUUGCCAGCGAAGGCGCUCGUUAGGCCUUGGGAAGAGGCGACCGGAGGCGAUGCCCGCG</p>
+        <p>AAUUUGUUAGGGGGAGUUGCUGAUCCCUGUGAUUUCCUCCAUGUGGGAAACGGUGUUUGUGCUAGAAGAGGCUGCGCUCUUUACCUGACAUAACGGGGUUCAAGACUGACAACGCCUC</p>
+        <p>ACGCCCACCCGAAAACGUUUACAUGGCUUCCUUGUCUCUUUUUUUUUCUGUCCUAAAGUCGCCUCAUCUUCACAUCCCCUCUUUUUUUUCUUCCACACUCGAGAGUGUCUCUCUCUCU</p>
+        <p>CAGUAAAAGCUCCACCAAAUAUUUGAAAUAUCUCAACCAGAAAGACUGCAAUAAAUACAUUAUUUCAUUCGUGGAAGGUACAGACCAGCUA</p>
+	<p>((((((....)))).)(((((((.(((.(.((.((((.(.(.((.((....))).).)..))(.(((((....)))(...((....)).(.(((....))).))))).))))))).)).)))..)))))(.(..(((.(.((.....(.(((.(.((((....)).))))).))))..(.....).))))).)(.(.(((.((((((.(.(.(.((((((((.(((..(...(.((...(.((((....)).).).))(.((.(((((((((..(.(((((.((((((.(((((((..(.(.((((.(((((....)))))((((.((.(.(((.(..(....).))))..).).))))))))))))(.....))..)))))).)).))))(.(((((.(((((....).(..(((((.(....)))))).)((((.(..((..((....))))(((((....))))....)((((((((....).(.((..(.....)(.....))))).)))(.(....)))).).).)))))))))))..))))(.(((((.(((((((.(....)).)))..)))))..))))))((.(.(((..(.(.(((.((((((((.(..(.((....))(..((.(....))).).).))(.((....)..))(..(.(..((.((((.((....)..)))))))..(..(((....).)).).))))).))(......)))))))((....).)))))).(((((.((..((.(.(.(((..(((((.((..(.((.((((.(((..(.(((((....))))).)))...)((((..(..(((((((.((.(..((.((..(.((((.(..(.....).)))))))))).)).))..))))))((.(((.(.(((....)).)))).).)).)))).(((.(.(.(....)).).).)).)))).(((((.(..((.((.(.(.(....)).))))....).).)))((((((((....))).).).)).))).))).).(..(.....)..).))))))))))...).))))))...).).)).)))))))).)).).)))...)))).).)))))(....)).).)(...(((.(..(.(.(.(....)..)))..)))))((.(.....))))).(..(......)))).))))))).(((....)))(.(((....)).)))).)))..)...)..</p>	
+	
+	<p>Length = 1231, Pairs = 440, Time = 10.6964103 sec</p>
+    </div>
+    </div>
+
+    <div class="testcase">
+    <h4 onclick="toggleContent(this)">3. 5S ribosomal RNA from Escherichia coli str. K-12 substr. MG1655 (PDB 7BL5, chain B) URS0000049E57_511145</h4>
+    <div class="testcase-content">
+	<p>UGCCUGGCGGCCGUAGCGCGGUGGUCCCACCUGACCCCAUGCCGAACUCAGAAGUGAAACGCCGUAGCGCCGAUGGUAGUGUGGGGUCUCCCCAUGCGAGAGUAGGGAACUGCCAGGCAU</p>
+	<p>(((((..(.((....)).)(..(.(.(..(..(((((((..((.((.(.....))...((((....)))))))))).(....)))((((..(.....)))))))).)).)...)))))).</p>
+	<p>Length = 120, Pairs = 42, Time = 0.1384066 sec</p></div>
+</div>
+
+
+    <div class="testcase">
+    <h4 onclick="toggleContent(this)">4. Synthetic construct M-box riboswitch (ykoK leader) URS000080E29A_32630</h4>
+    <div class="testcase-content">
+	<p>GGGCUUCGUUAGGUGAGGCUCCUGUAUGGAGAUACGCUGCUGCCCAAAAAUGUCCAAAGACGCCAAUGGGUCAACAGAAAUCAUCGACAUAAGGUGAUUUUUAAUGCAGCUGGAUGCUUGUCCUAUGCCAUACAGUGCUAAAGCUCUACGAUUGAAGCCCA</p>
+	<p>.((.(..((...(..(((..(.(((((....))))).....)))))))).((((....))))))..(.(((((.(.(((..(.(..((....)..)))))))(((..(.(((..(......)).).)).))(.(.(((....))....)))))))..))).</p>
+	<p>Length = 161, Pairs = 55, Time = 0.4493016 sec</p></div></div>
+
+<div class="testcase">
+    <h4  onclick="toggleContent(this)">5. Homo sapiens (human) RNA, 28S ribosomal N2 (RNA28SN2) URS0000ABD8B3_9606</h4>
+    <div class="testcase-content">
+	<p>CGCGACCUCAGAUCAGACGUGGCGACCCGCUGAAUUUAAGCAUAUUAGUCAGCGGAGGAAAAGAAACUAACCAGGAUUCCCUCAGUAACGGCGAGUGAACAGGGAAGAGCCCAGCGCCGAAUCCCCGCCCCGCGGCGGGG
+        <p>CGCGGGACAUGUGGCGUACGGAAGACCCGCUCCCCGGCGCCGCUCGUGGGGGGCCCAAGUCCUUCUGAUCGAGGCCCAGCCCGUGGACGGUGUGAGGCCGGUAGCGGCCCCCGGCGCGCCGGGCCCGGGUCUUCCG</p>
+        <p>GAGUCGGGUUGCUUGGGAAUGCAGCCCAAAGCGGGUGGUAAACUCCAUCUAAGGCUAAAUACCGGCACGAGACCGAUAGUCAACAAGUACCGUAAGGGAAAGUUGAAAAGAACUUUGAAGAGAGAGUUCAAGAGGGC</p>
+        <p>GUGAAACCGUUAAGAGGUAAACGGGUGGGGUCCGCGCAGUCCGCCCGGAGGAUUCAACCCGGCGGCGGGUCCGGCCGUGUCGGCGGCCCGGCGGAUCUUUCCCGCCCCCCGUUCCUCCCGACCCCUCCACCCGCCCU</p><p>CCCUUCCCCCGCCGCCCCUCCUCCUCCUCCCCGGAGGGGGCGGGCUCCGGCGGGUGCGGGGGUGGGCGGGCGGGGCCGGGGGUGGGGUCGGCGGGGGACCGUCCCCCGACCGGCGACCGGCCGCCGCCGGGCGCAUU</p><p>CCCUUCCCCCGCCGCCCCUCCUCCUCCUCCCCGGAGGGGGCGGGCUCCGGCGGGUGCGGGGGUGGGCGGGCGGGGCCGGGGGUGGGGUCGGCGGGGGACCGUCCCCCGACCGGCGACCGGCCGCCGCCGGGCGCAUU</p><p>UCCACCGCGGCGGUGCGCCGCGACCGGCUCCGGGACGGCUGGGAAGGCCCGGCGGGGAAGGUGGCUCGGGGGGCCCCGUCCGUCCGUCCGUCCGUCCUCCUCCUCCCCCGUCUCCGCCCCCCGGCCCCGCGUCCUCC</p><p>CUCGGGAGGGCGCGCGGGUCGGGGCGGCGGCGGCGGUGGCGGCGGCGGCGGCGGCGGCGGGACCGAAACCCCCCCCGAGUGUUACAGCCCCCCCGGCAGCAGCACUCGCCGAAUCCCGGGGCCGAGGGAGCGAGACC</p><p>ACCCCUCCUCCCCGCGCCCCCGCCCCGGCGACGGGGGGGGUGCCGCGCGCGGGUCGGGGGGCGGGGCGGACUGUCCCCAGUGCGCCCCGGGCGGGUCGCGCCGUCGGGCCCGGGGGGAGGUUCUCUCGGGGCCACGC</p><p>GCGCGUCCCCCGAAGAGGGGGACGGCGGAGCGAGCGCACGGGGUCGGCGGCGACGUCGGCUACCCACCCGACCCGUCUUGAAACACGGACCAAGGAGUCUAACACGUGCGCGAGUCGGGGGCUCGCACGAAAGCCGC</p><p>CGUGGCGCAAUGAAGGUGAAGGCCGGCGCGCUCGCCGGCCGAGGUGGGAUCCCGAGGCCUCUCCAGUCCGCCGAGGGCGCACCACCGGCCCGUCUCGCCCGCCGCGCCGGGGAGGUGGAGCACGAGCGCACGUGUUA</p><p>GGACCCGAAAGAUGGUGAACUAUGCCUGGGCAGGGCGAAGCCAGAGGAAACUCUGGUGGAGGUCCGUAGCGGUCCUGACGUGCAAAUCGGUCGUCCGACCUGGGUAUAGGGGCGAAAGACUAAUCGAACCAUCUAGU</p><p>AGCUGGUUCCCUCCGAAGUUUCCCUCAGGAUAGCUGGCGCUCUCGCAGACCCGACGCACCCCCGCCACGCAGUUUUAUCCGGUAAAGCGAAUGAUUAGAGGUCUUGGGGCCGAAACGAUCUCAACCUAUUCUCAAAC</p><p>UUUAAAUGGGUAAGAAGCCCGGCUCGCUGGCGUGGAGCCGGGCGUGGAAUGCGAGUGCCUAGUGGGCCACUUUUGGUAAGCAGAACUGGCGCUGCGGGAUGAACCGAACGCCGGGUUAAGGCGCCCGAUGCCGACGC</p><p>UCAUCAGACCCCAGAAAAGGUGUUGGUUGAUAUAGACAGCAGGACGGUGGCCAUGGAAGUCGGAAUCCGCUAAGGAGUGUGUAACAACUCACCUGCCGAAUCAACUAGCCCUGAAAAUGGAUGGCGCUGGAGCGUCG</p><p>GGCCCAUACCCGGCCGUCGCCGGCAGUCGAGAGUGGACGGGAGCGGCGGGGGCGGCGCGCGCGCGCGCGCGUGUGGUGUGCGUCGGAGGGCGGCGGCGGCGGCGGGGGUGUGUGGGGUCCUCCCCCGCCCCCCCCCC</p><p>ACGCCUCCUCCCCUCCUCCCGCCCACGCCCCGCUCCCCGCCCCCGGAGCCCCGCGGACGCUACGCCGCGACGAGUAGGAGGGCCGCUGCGGUGAGCCUUGAAGCCUAGGGCGCGGGCCCGGGUGGAGCCGCCGCAGGUGCAGAUCUUGGUGGUAGUAGCAAAUAUUCAAACGAGAACUUUGAAGGCCGAAGUGGAGAAGGGUUCCAUGUGA</p><p>ACAGCAGUUGAACAUGGGUCAGUCGGUCCUGAGAGAUGGGCGAGCGCCGUUCUGAAGGGACGGGCGAUGGCCUCCGUUGCCCUCGGCCGAUCGAAAGGGAGUCGGGUUCAGAUCCCCGAAUCCGGAGUGGCGGAGAUGGGCGCCGCGAGGCGUCCAGUGCGGUAACGCGACCGAUCCCGGAGAAGCCGGCGGGAGCCCCGGGGAG</p><p>AGUUCUCUUUUCUUUGUGAAGGGCAGGGCGCCCUGGAAUGGGUUCGCCCCGAGAGAGGGGCCCGUGCCUUGGAAAGCGUCGCGGUUCCGGCGGCGUCCGGUGAGCUCUCGCUGGCCCUUGAAAAUCCGGGGGAGAGGGUGUAAAUCUCGCGCCGGGCCGUACCCAUAUCCGCAGCAGGUCUCCAAGGUGAACAGCCUCUGGCAUGUUGGAAC</p><p>AAUGUAGGUAAGGGAAGUCGGCAAGCCGGAUCCGUAACUUCGGGAUAAGGAUUGGCUCUAAGGGCUGGGUCGGUCGGGCUGGGGCGCGAAGCGGGGCUGGGCGCGCGCCGCGGCUGGACGAGGCGCCGCCGCCCCCCCCACGCCCGGGGCACCCCCCUCGCGGCCCUCCCCCGCCCCACCCCGCGCGCGCCGCUCGCUCCCUCCCCACCCC</p><p>GCGCCCUCUCUCUCUCUCUCUCCCCCGCUCCCCGUCCUCCCCCCUCCCCGGGGGAGCGCCGCGUGGGGGCGGCGGCGGGGGGAGAAGGGUCGGGGCGGCAGGGGCCGGCGGCGGCCGCCGCGGGGCCCCGGCGGCGGGGGCACGGUCCCCCGCGAGGGGGGCCCGGGCACCCGGGGGGCCGGCGGCGGCGGCGACUCUGGACGC</p><p>GAGCCGGGCCCUUCCCGUGGAUCGCCCCAGCUGCGGCGGGCGUCGCGGCCGCCCCCGGGGAGCCCGGCGGGCGCCGGCGCGNCCCCCCCCCCACCCCACGUCUCGUCGCGCGCGCGUCCGCUGGGGGCGGGGAGCGGUCGGGCGGCGGCGGUCGGCGGGCGGCGGGGCGGGGCGGUUCGUCCCCCCGCCCUACCCCCCCGGCCCC</p><p>GUCCGCCCCCCGUUCCCCCCUCCUCCUCGGCGCGCGGCGGCGGCGGCGGGCGGCGGAGGGGCCGCGGGCCGGUCCCCCCCGCCGGGUCCGCCCCCGGGGCCGCGGUUCCGCGCGGCGCCUCGCCUCGGCCGGCGCCUAGCAGCCGACUUAGAACUGGUGCGGACCAGGGGAAUCCGACUGUUUAAUUAAAACAAAGCAUCGCGAAGG</p><p>CCCGCGGCGGGUGUUGACGCGAUGUGAUUUCUGCCCAGUGCUCUGAAUGUCAAAGUGAAGAAAUUCAAUGAAGCGCGGGUAAACGGCGGGAGUAACUAUGACUCUCUUAAGGUAGCCAAAUGCCUCGUCAUCUAAUUAGUGACGCGCAUGAAUGGAUGAACGAGAUUCCCACUGUCCCUACCUACUAUCCAGCGAAACCACAGCCAA</p><p>GGGAACGGGCUUGGCGGAAUCAGCGGGGAAAGAAGACCCUGUUGAGCUUGACUCUAGUCUGGCACGGUGAAGAGACAUGAGAGGUGUAGAAUAAGUGGGAGGCCCCCGGCGCCCCCCCGGUGUCCCCGCGAGGGGCCCGGGGCGGGGUCCGCCGGCCCUGCGGGCCGCCGGUGAAAUACCACUACUCUGAUCGUUUUUUCAC</p><p>UGACCCGGUGAGGCGGGGGGGCGAGCCCCGAGGGGCUCUCGCUUCUGGCGCCAAGCGCCCGGCCGCGCGCCGGCCGGGCGCGACCCGCUCCGGGGACAGUGCCAGGUGGGGAGUUUGACUGGGGCGGUACACCUGUCAAACGGUAACGCAGGUGUCCUAAGGCGAGCUCAGGGAGGACAGAAACCUCCCGUGGAGCAGAAGGGC</p><p>AAAAGCUCGCUUGAUCUUGAUUUUCAGUACGAAUACAGACCGUGAAAGCGGGGCCUCACGAUCCUUCUGACCUUUUGGGUUUUAAGCAGGAGGUGUCAGAAAAGUUACCACAGGGAUAACUGGCUUGUGGCGGCCAAGCGUUCAUAGCGACGUCGCUUUUUGAUCCUUCGAUGUCGGCUCUUCCUAUCAUUGUGAAGCAGAAU</p><p>UCACCAAGCGUUGGAUUGUUCACCCACUAAUAGGGAACGUGAGCUGGGUUUAGACCGUCGUGAGACAGGUUAGUUUUACCCUACUGAUGAUGUGUUGUUGCCAUGGUAAUCCUGCUCAGUACGAGAGGAACCGCAGGUUCAGACAUUUGGUGUAUGUGCUUGGCUGAGGAGCCAAUGGGGCGAAGCUACCAUCUGUGGGAUUAU</p><p>GACUGAACGCCUCUAAGUCAGAAUCCCGCCCAGGCGGAACGAUACGGCAGCGCCGCGGAGCCUCGGUUGGCCUCGGAUAGCCGGUCCCCCGCCUGUCCCCGCCGGCGGGCCGCCCCCCCCUCCACGCGCCCCGCGCGCGCGGGAGGGCGCGUGCCCCGCCGCGCGCCGGGACCGGGGUCCGGUGCGGAGUGCCCUUCGUCCUGGGAAAC</p>GGGGCGCGGCUGGAAAGGCGGCCGCCCCCUCGCCCGUCACGCACCGCACGUUCGUGGGGAACCUGGCGCUAAACCAUUCGUAGACGACCUGCUUCUGGGUCGGGGUUUCGUACGUAGCAGAGCAGCUCCCUCGCUGCGAUCUAUUGAAAGUCAGCCCUCGACACAAGGGUUUGUC</p>
+	<p>((((((....).)).).))..(.(...((((.((((...((.(.(((((((.(.((((.(..((((.(((((..((((((.(...(..((.(.(((((((.((((((((((((((((.(((((((((.(..(.....).))).))))..).)))))..)(.(.(.(..(.((((((.(.(((.(...(((((((....)(...(.(....).))))(.(((((....))).)))(.((((....))))))))))))).)))))((.((.((((((((((.((((..(.((..(((.(((((((..((((((.((..((((((..(.((....)).(..(((((....).))))(.(..((....)))..)).)).)..))).((((....)))..(.(.(.(....(((((((((((.(((.((....)))).(..(((((((...(.(..((((.((((((((....((..(((.((.(((.((.(((.(....)))))))).(((((....))).)))))).)))))))((((.(..((.(((((((.(((..((((((((((.(..(..(..(.(((....)))).)..).))...)))))).).))))).)).)))(((....))))))..).))))))))))))))..))))).))))((.((((((....))))).))).).)).)).)(((((((.(..((....).(.(((((..((((..(((..(((((.((((.(((....)))(..((.((((.(((.(((.(((.((..(...(..(..(.((..(..((((((((.((((((((.((((.(.....)))).)))).))).))))).))))).))..)..)..)..).))))))))))))))).)).....)))))))).).))).))))))))..)).)))..))).)))))...(.((((..(.(((((.(.((.((((((((.(.(..(.(((.(((((((.(.((.((((((((((((....))))))).)))))).)(((((.(.((((.(.(.....)..).)).)).)))))).)))))(.((((.((((((((((((.(.(.(.(((.((((.((.((((((((((((.((((((....))))))))).)).))).).)))..))))))((((.(.(((.(.....))).).))))))).)))))))))))).)))...))))))))).(.(.(((((..((.(.....)))))).)).).)))).).)..))((((((((.(((((((((.((((.(..(.((.(((((((((.((((((((....)((.(.((.(((.((((((((((.(..((((..(.....))))).)).(....)(..(.(((..((...(.(.(((((((.((....).))))))(((((.(.....).)..)))))))...)((((.((((....)).))))))(((((.(((.((.((....))).)).)))).)))))))).)))))))).)))(((.(((((((.(.(((((.(..((.(((((..(.((((((....)))))).(.(((.((..(.((.(((((.(.(.((((((((....)))).(.....))((((.((((.(((..(..((....)).)))...)..))))).))....))))).)))))).(.(.(.((....).))).)))..)).))))))))).)))))(((.(......))))).).).)))(..((.((((....).))))...).)).)).)).))(.....)).(..((((....).)))...))))))))))))).).))))).))..)).).)))))..))(.((((((((..(.....).))(..(((((((.(.(....)(.((((((((.(.(((.((.(.....(.((((.(((((.(..(((...(.(....)))))))))...)(((((((..(.....)).)(..(.(....).)))))(.(((.(.(((....)).).).).)(..(....)...)).))..(..((....).)))..)))))).)))).)))))))).)))).)).))).))))))))).)(....(..(..(..(..(.((....).).)((.(..(...(.(..((((((.((.(((((.((.(((((.(.(.(((((....))))).))))))))))..))).)).))).))).))..).).)))).).).)).)))))).).).))))).)..)))).))).)))))).))((((((((((.((((((.((((((((.(((...(.(.(.(((((....)).))).)..)))))((.(((((..(((..(.(.(....))(.(((..(.....)))))...)).))(..(((((.(..((((.(.((.(.....)).)..))))..)(.(.(.((..((....))).))).)..).)))).)(.((((((.(.....)).)(...((..(...(.((((...(((.(.(((....).)).)))))).)).)..)(((((((((.((.(((((((((((.((...((((.(((((((((..(((((..(.....))(..(.....).))).)).))(.(....((.(.....))((((((.(.((((((((....))).)(....))).))..))).))))(.....)).)))))).))))).))))).))..)(.....)))).)))))(...((((((....).))...).)))))))).)))))).)))).))))((((.((....).(.((((((.(......))).)))(((((....))).)).)).(.(.(..(.((((....))).).).....))).)).))))).)))).))).)))).))(...(..((((..((((((((.(((.(((..(.(.(.(.(.(.((....)...).).).)..)).))))(.....)).(.((....).).)))))).))).)))).))).))))..))))).))).))).)))))))))).))))).)))))))).).).).).).))))))))((((((.(((((((.(((((..(.(....))).).))))(((....)))))))))(((((((.((.(.((.(((((((.(.(((((.((.(.((((((((((((((((((..(....))))))).(.(.(((.(((((((((((((((((((....))))(.(.(.(.((....)).)))...)))..)))).)).).))))..).((((.(((((.(((((.(((.(.(.(.(.....))..).)))))).)))).))).(.(.(..(.(.((.(.(..(.(.((((((.((.(..((((.((((.(..(...(..(.((((((..((((((.((.(((((((((.((.(....))))))))))..)))))).).))))).))))).).)...)))))).)).)...))))))))).)..)))))..)..)..)..).).))))).)))....).).))))))))...))))).))))))))....))).)((.(((((.((((((((....)))..).))(..(....)(.(((((.(((.((((((((.((..(.(((((....))).))(.((((((((....)..)))(..(.(.....)).)))))).((.(.(((.(.((.(.(.(....))(.(((((....)))).))..)).)))).)))))).(((((((....).)))).)))(...(.......).((((((((.(..(((.((.(....))).)))..)))).)))))))))).))))))).)))(((.(.(..((...((.(.(((..((....))).)).))))))(((....)..)(..(.(....)..)))((((.(((((((.(....))..).).))).))..))....).))..)))))))))))))).(((((((((((((.(.(((((....))))))))))).)))..).)))))))))))...))..))((((((((....)).).)((....)))..)))..))))..)))..)))))))))(((.((....).))))).)))))(....).)).((((((((.(......))))))))))..))))))))))).).))..)).)).)))..))))..)))))(.(.((((((.(.(((.((.((((....)).))))((((((((((((.((....)((....).).).)).)))((((.(((....))...)))((.(...((....)((....).).).)(((((....).(.....))))))))))).).)))))))(((....).))..)))))((.(((.(((((((....)).)))))((((.(.(....).)))).))(.(((((....))))))))))))).(.(....)))))))))))((((((((..(..(....)))).))...).).)).)))))))).))..).)))))..)....))).))(.(((((((....))).)))))))))...(.((((....).)))))..).)).(((....)(((((.(((((.(..(.(((.(.((((((.(((.(....)))(.((.(((((((....)))))).).(......).)..)).)).(((((.(((((.(((....).)).)))).))))))(((...(.(.((((.(.((((.((((.(((.(.(.((....))(..(((....)))).).(..(..(((((((((((((((..(...((((((((.(((((..(.....))))))))))).).).)))).)))).)))..))))).)).).)))).)))...)))).))))))).)))))))(((.(.(.(((....)).)..)..)))))).)((..(.(.(.((.((((....))))))..)..)(.(...(.....).)).)(.(((..((....))))))))))).)...)))).).)))))))..).)).)))..).))))))))).)))))..))).(((((....)))))</p>
+	<p>Length = 5054, Pairs = 1881, Time = 1279.845141 sec</p></div>
+
+    
+</div>
+    </section>
+    <section>
+        <script>
+            function toggleContent(element) {
+                var content = element.nextElementSibling;
+                content.classList.toggle('active');
+            }
+        </script>
+        <h2>Comparisions & Analysis: </h2>
+        <h3>Similarity Score :</h3>
+        <ol>
+            <li>Iterate through each character in the original and predicted dot structures simultaneously.</li>
+            <li>For each pair of characters:
+                <ul>
+                    <li>If both characters are '.', increment the score by 1.</li>
+                    <li>If both characters are '(', increment the score by 1.</li>
+                    <li>If both characters are ')', increment the score by 1.</li>
+                    <li>If one character is '(' and the other is ')', increment the score by 1.</li>
+                    <li>If one character is '.' and the other is '(', decrement the score by 1.</li>
+                    <li>If one character is '(' and the other is '.', decrement the score by 1.</li>
+                </ul>
+            </li>
+            <li>The final similarity score is the sum of all the increments and decrements.</li>
+        </ol>
+        <p>This scoring system gives a higher score for matching base pairs and unpaired bases and penalizes mismatches between
+            the original and predicted dot structures. The similarity score can range from -len(dot_structure) to
+            +len(dot_structure), where a higher positive score indicates greater similarity between the structures, and a
+            negative score indicates dissimilarity.</p>
+        <div class="testcase">
+            <h4 onclick="toggleContent(this)">1.Homo sapiens (human) small Cajal body-specific RNA 7 (SCARNA7)</h4>
+        <div class="testcase-content">
+            <p>Original Dot-bracket notation:</p>
+            <div class="section-with-image">
+                <a href="https://rnacentral.org/rna/URS00002B3204/9606">
+            <img src="TC1.jpg" alt="Testcase1" ></a>
+            <h4>Graphical Comparision</h4>
+            <img src="graph1.png" alt="graph1">
+        </div><p>similarity Score: 57</p>
+        </div>
+        
+        </div>
+        <div class="testcase">
+            <h4 onclick="toggleContent(this)">2. Homo sapiens (human) long intergenic non-protein coding RNA 3126 (LINC03126)
+                URS0000E60AA8_9606</h4>
+                <div class="testcase-content">
+                    <p>Original Dot-bracket notation:</p>
+                    <div class="section-with-image">
+                        <a href="https://rnacentral.org/rna/URS0000E60AA8/9606">
+                            <img src="TC2.jpg" alt="Testcase2"></a>
+                            <h4>Graphical Comparision</h4>
+                            <img src="graph2.png" alt="graph1">
+                    </div>
+                    
+                </div>
+        </div>
+        <div class="testcase">
+            <h4 onclick="toggleContent(this)">3. 5S ribosomal RNA from Escherichia coli str. K-12 substr. MG1655 (PDB 7BL5,chain B) URS0000049E57_511145</h4>
+        <div class="testcase-content">
+            <p>Original Dot-bracket notation:</p>
+            <div class="section-with-image">
+                <a href="https://rnacentral.org/rna/URS0000049E57/511145">
+                    <img src="TC3.png" alt="Testcase3"></a>
+                    <h4>Graphical Comparision</h4>
+                    <img src="graph3.png" alt="graph1">
+            </div>
+            <p>Similarity Score: 24</p>
+        </div>
+            </div>
+                <div class="testcase">
+                    <h4 onclick="toggleContent(this)">4. Synthetic construct M-box riboswitch (ykoK leader) URS000080E29A_32630</h4>
+                    <div class="testcase-content">
+                        <p>Original Dot-bracket notation:</p>
+                        <div class="section-with-image">
+                            <a href="https://rnacentral.org/rna/URS000080E29A/32630">
+                                <img src="TC4.png" alt="Testcase4"></a>
+                                <h4>Graphical Comparision</h4>
+                                <img src="graph4.png" alt="graph1">
+                                </div>
+                                <p>Similarity Score: 54</p>
+                        
+                    </div>
+                </div>
+                <div class="testcase">
+                    <h4 onclick="toggleContent(this)">5. Homo sapiens (human) RNA, 28S ribosomal N2 (RNA28SN2) URS0000ABD8B3_9606</h4>
+                    <div class="testcase-content">
+                        <p>Original Dot-bracket notation:</p>
+                        <div class="section-with-image">
+                            <a href="https://rnacentral.org/rna/URS0000ABD8B3/9606">
+                                <img src="TC5.jpeg" alt="Testcase5"></a>
+                        <h4>Graphical Comparision</h4>
+                        <img src="graph5.png" alt="graph1">
+                        </div>
+                        <p>Similarity Score: 1635</p>
+                    </div>
+                </div>
+        
+        
+
+        
+    </section>
+    <section>
+    <h2>Timing Analysis</h2>
+    <div id="timing-chart"></div>
+    <script>
+        anychart.onDocumentReady(function () {
+
+            var data = [
+                ["121", 0.0147],
+                ["2324", 5.4695],
+                ["3363", 18.4318],
+                ["6025", 70.2569],
+                ["8073", 209.5634]
+            ];
+
+            var dataSet = anychart.data.set(data);
+            var seriesData = dataSet.mapAs({x: 0, value: 1});
+            var chart = anychart.line();
+            var series = chart.line(seriesData);
+            series.name("Seconds");
+            chart.legend().enabled(true);
+            chart.container("timing-chart");
+            chart.draw();
+        });
+    </script>
+</section>
+
+<section>
+    <div id="memory-chart"></div>
+    <script>
+        anychart.onDocumentReady(function () {
+
+            var data = [
+                ["181", 0.0189],
+                ["3156", 17.1256],
+                ["4125", 38.1256],
+                ["5214", 68.2698],
+                ["9625", 300.265]
+            ];
+
+            var dataSet = anychart.data.set(data);
+            var seriesData = dataSet.mapAs({x: 0, value: 1});
+            var chart = anychart.line();
+            var series = chart.line(seriesData);
+            series.name("Seconds");
+            chart.legend().enabled(true);
+            chart.container("memory-chart");
+            chart.draw();
+        });
+    </script>
+</section>
+
+
+</body>
+</html>
